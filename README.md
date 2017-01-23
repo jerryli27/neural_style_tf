@@ -19,19 +19,22 @@ This repository is an effort to learn CNN and neural style. As a result, some pa
 Note that some of the code and images was taken and adapted from code on other neural style related git repo online. I did my best to cite every source I've used, but in case I missed anything or if you're one of the authors and would not like your code to be used in this repo, please let me know.
 
 ## Back propagation examples
+
+The following examples comes from [stylize_example.py](stylize_example.py) in the repo.
+
 ###### Style Transfer
 <p align="center">
-<img src="stylize_examples/1-content.jpg" width="192"/>
-<img src="stylize_examples/output/1_result.jpg" width="192"/>
-<img src="stylize_examples/1-style.jpg" width="192"/>
+<img src="stylize_examples/1-content.jpg" width="30%"/>
+<img src="stylize_examples/output/1_result.jpg" width="30%"/>
+<img src="stylize_examples/1-style.jpg" width="30%"/>
 </p>
 
 This is the output of the classic neural style algorithm described in ["A Neural Algorithm of Artistic Style"](https://arxiv.org/abs/1508.06576). Here it takes one content image and one style image and merge the two so that the outcome describe the same scene but with a different artistic "style".
 
 ###### Texture Synthesis
 <p align="center">
-<img src="stylize_examples/output/2_result.jpg" width="192"/>
-<img src="stylize_examples/1-style.jpg" width="192"/>
+<img src="stylize_examples/output/2_result.jpg" width="30%"/>
+<img src="stylize_examples/1-style.jpg" width="30%"/>
 </p>
 
 This used essentially the same algorithm in ["A Neural Algorithm of Artistic Style"](https://arxiv.org/abs/1508.06576) but without a content image. As a result, the output showed the texture features of the style image.
@@ -39,66 +42,71 @@ This used essentially the same algorithm in ["A Neural Algorithm of Artistic Sty
 ###### Multiple style transfer
 
 <p align="center">
-<img src="stylize_examples/1-content.jpg" width="192"/>
-<img src="stylize_examples/output/3_result.jpg" width="192"/>
-<img src="stylize_examples/example_3.jpg" width="192"/>
+<img src="stylize_examples/1-content.jpg" width="30%"/>
+<img src="stylize_examples/output/3_result.jpg" width="30%"/>
+<img src="stylize_examples/example_3.jpg" width="30%"/>
 </p>
 
 This output is made from weighing Van Gogh's "starry sky" style by 70% and Picasso's "mind, spirit and emotion" by 30%.
 
 ###### Using Markov Random Fields
 <p align="center">
-<img src="stylize_examples/4-content.jpg" width="192"/>
-<img src="stylize_examples/output/4_result.jpg" width="192"/>
-<img src="stylize_examples/4-style.jpg" width="192"/>
+<img src="stylize_examples/4-content.jpg" width="30%"/>
+<img src="stylize_examples/output/4_result.jpg" width="30%"/>
+<img src="stylize_examples/4-style.jpg" width="30%"/>
 </p>
 
-This one is achieved by using the MRF loss mentioned in [this paper](arxiv.org/abs/1601.04589) on two images with similar content but different "style". The result is the original day view of Tokyo turned into a night view.
+This one is achieved by using the MRF loss mentioned in [this paper](arxiv.org/abs/1601.04589) on two images with similar content but different "style". The result is the original day view of Tokyo turned into the same scene during a sunset.
 
 
 ###### MRF with semantic masks
 <p align="center">
-<img src="stylize_examples/5-content.jpg" width="192"/>
-<img src="stylize_examples/output/5_result.jpg" width="192"/>
-<img src="stylize_examples/5-style.jpg" width="192"/>
+<img src="stylize_examples/5-content.jpg" width="30%"/>
+<img src="stylize_examples/output/5_result.jpg" width="30%"/>
+<img src="stylize_examples/5-style.jpg" width="30%"/>
 </p>
 
 In [the same paper](arxiv.org/abs/1601.04589), the authors also take use of semantically labeled image for style transfer and they got some interesting result, which is repeated here.
 
 ###### Style weight mask
 <p align="center">
-<img src="stylize_examples/6-content.jpg" width="192"/>
-<img src="stylize_examples/output/6_result.jpg" width="192"/>
-<img src="stylize_examples/1-style.jpg" width="192"/>
-<img src="stylize_examples/6-mask.jpg" width="192"/>
+<img src="stylize_examples/6-content.jpg" width="23%"/>
+<img src="stylize_examples/6-mask.jpg" width="23%"/>
+<img src="stylize_examples/output/6_result.jpg" width="23%"/>
+<img src="stylize_examples/1-style.jpg" width="23%"/>
 </p>
 
 This one is a simple improvement I made to the neural style. When I was using the program, I found that sometimes the program stylize one part of image a little bit too much than what I want but some other parts a little bit less. With the help of what I call 'style weight mask' (in black and white), one can control the degree of stylization for every single pixel.
 
+The images from left to right are: content image, style weight mask, output, style image.
 
 ## Feed forward examples
+
+The following examples comes from [feed_forward_neural_style_examples.py](feed_forward_neural_style_examples.py) in the repo.
+
 ###### Multi style feed forward network
 
 Original image:
-<img src="feed_forward_examples/1-content.jpg"/>
+
+<img src="feed_forward_examples/1-content.jpg" width="90%"/>
 
 ModelName | Style | Samples
 ---       | ---   | ---
-starry sky | <img src="feed_forward_examples/1-style.jpg" width="200"/> | <img src="feed_forward_examples/output/feed_forward_example_1-stylenum-0-iter-17000.jpg" width="200"/>
-mind, spirit and emotion | <img src="feed_forward_examples/2-style.jpg" width="200"/> | <img src="feed_forward_examples/output/feed_forward_example_1-stylenum-1-iter-17000.jpg" width="200"/>
-composition_v | <img src="feed_forward_examples/3-style.jpg" width="200"/> | <img src="feed_forward_examples/output/feed_forward_example_1-stylenum-2-iter-17000.jpg" width="200"/>
-feathers | <img src="feed_forward_examples/4-style.jpg" width="200"/> | <img src="feed_forward_examples/output/feed_forward_example_1-stylenum-3-iter-17000.jpg" width="200"/>
-la_muse | <img src="feed_forward_examples/5-style.jpg" width="200"/> | <img src="feed_forward_examples/output/feed_forward_example_1-stylenum-4-iter-17000.jpg" width="200"/>
-mosaic | <img src="feed_forward_examples/6-style.jpg" width="200"/> | <img src="feed_forward_examples/output/feed_forward_example_1-stylenum-5-iter-17000.jpg" width="200"/>
-the scream | <img src="feed_forward_examples/7-style.jpg" width="200"/> | <img src="feed_forward_examples/output/feed_forward_example_1-stylenum-6-iter-17000.jpg" width="200"/>
-udnie | <img src="feed_forward_examples/8-style.jpg" width="200"/> | <img src="feed_forward_examples/output/feed_forward_example_1-stylenum-7-iter-17000.jpg" width="200"/>
-wave | <img src="feed_forward_examples/9-style.jpg" width="200"/> | <img src="feed_forward_examples/output/feed_forward_example_1-stylenum-8-iter-17000.jpg" width="200"/>
+starry sky | <img src="feed_forward_examples/1-style.jpg" width="100%"/> | <img src="feed_forward_examples/output/feed_forward_example_1-stylenum-0-iter-17000.jpg" width="100%"/>
+mind, spirit and emotion | <img src="feed_forward_examples/2-style.jpg" width="100%"/> | <img src="feed_forward_examples/output/feed_forward_example_1-stylenum-1-iter-17000.jpg" width="100%"/>
+composition_v | <img src="feed_forward_examples/3-style.jpg" width="100%"/> | <img src="feed_forward_examples/output/feed_forward_example_1-stylenum-2-iter-17000.jpg" width="100%"/>
+feathers | <img src="feed_forward_examples/4-style.jpg" width="100%"/> | <img src="feed_forward_examples/output/feed_forward_example_1-stylenum-3-iter-17000.jpg" width="100%"/>
+la_muse | <img src="feed_forward_examples/5-style.jpg" width="100%"/> | <img src="feed_forward_examples/output/feed_forward_example_1-stylenum-4-iter-17000.jpg" width="100%"/>
+mosaic | <img src="feed_forward_examples/6-style.jpg" width="100%"/> | <img src="feed_forward_examples/output/feed_forward_example_1-stylenum-5-iter-17000.jpg" width="100%"/>
+the scream | <img src="feed_forward_examples/7-style.jpg" width="100%"/> | <img src="feed_forward_examples/output/feed_forward_example_1-stylenum-6-iter-17000.jpg" width="100%"/>
+udnie | <img src="feed_forward_examples/8-style.jpg" width="100%"/> | <img src="feed_forward_examples/output/feed_forward_example_1-stylenum-7-iter-17000.jpg" width="100%"/>
+wave | <img src="feed_forward_examples/9-style.jpg" width="100%"/> | <img src="feed_forward_examples/output/feed_forward_example_1-stylenum-8-iter-17000.jpg" width="100%"/>
 
 These are just some examples. With more training time, the results can be better. (Some style images are taken from [here](https://github.com/junrushao1994/fast-neural-style.tf))
 
 ###### Neural doodle
 
-TODO: IMAGE MISSING
+TODO: IMAGE MISSING. For now check [this blog](https://dmitryulyanov.github.io/feed-forward-neural-doodle/) for sample images.
 
 I basically reimplemented the feed-forward version of [the neural doodle](https://dmitryulyanov.github.io/feed-forward-neural-doodle/), which allows anyone to paint like a real artist within minutes.
 
