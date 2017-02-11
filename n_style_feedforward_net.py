@@ -550,8 +550,7 @@ def style_synthesis_net(path_to_network, height, width, styles, iterations, batc
                 else:
                     sess.run(tf.initialize_all_variables())
 
-                if not (style_only or use_semantic_masks or content_preprocessed_folder is None or
-                                content_preprocessed_folder == ''):
+                if (content_preprocessed_folder is None or content_preprocessed_folder == '') and (not style_only):
                     # Get path to all content images.
                     content_dirs = get_all_image_paths_in_dir(content_folder)
                     # Ignore the ones at the end.
