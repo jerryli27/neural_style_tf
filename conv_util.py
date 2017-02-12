@@ -10,15 +10,17 @@ from typing import Union, Callable
 WEIGHTS_INIT_STDEV = .1
 
 
-def conv_layer(net, num_filters, filter_size, strides, elu=True, mirror_padding=True, one_hot_style_vector=None,
+
+def conv_layer(net, num_filters, filter_size, strides, with_bias = True, elu=True, mirror_padding=True, one_hot_style_vector=None,
                norm='instance_norm', dilation = 1, name='', reuse=False):
-    # type: (tf.Tensor, int, int, int, bool, bool, Union[None,tf.Tensor], str, int, str, bool) -> tf.Tensor
+    # type: (tf.Tensor, int, int, int, bool, bool, bool, Union[None,tf.Tensor], str, int, str, bool) -> tf.Tensor
     """
     This function generates a convolution layer given the input layer and the output shape info.
     :param net: tensor with shape (batch_size, height, width, num_input_features)
     :param num_filters: Number of output filters/features/channels.
     :param filter_size: The size of each filter.
     :param strides: The stride size of the CNN.
+    :param with_bias: If true, add bias to conv layers. The default is not having bias in conv and deconv layers.
     :param elu: whether we apply elu after convolution and normalization.
     :param mirror_padding: If true it uses mirror padding. Otherwise it uses zero padding.
     :param one_hot_style_vector: The 1d tensor representing which style is currently being trained. It is used with
@@ -30,15 +32,19 @@ def conv_layer(net, num_filters, filter_size, strides, elu=True, mirror_padding=
     the output may change slightly if it cannot be divided evenly by the "strides".
     """
     with tf.variable_scope('conv_layer' + name, reuse=reuse):
-        weights_init = conv_init_vars(net, num_filters, filter_size, name=name, reuse=reuse)
+        weights_init, bias_init = conv_init_vars(net, num_filters, filter_size, with_bias=with_bias, name=name, reuse=reuse)
         if mirror_padding:
-            net = conv2d_mirror_padding(net, weights_init, None, filter_size, stride=strides, dilation=dilation)
+            net = conv2d_mirror_padding(net, weights_init, bias_init, filter_size, stride=strides, dilation=dilation)
         else:
             if dilation == 1:
                 strides_shape = [1, strides, strides, 1]
                 net = tf.nn.conv2d(net, weights_init, strides_shape, padding='SAME')
+                if bias_init:
+                    net = tf.nn.bias_add(net, bias_init)
             else:
                 net = tf.nn.atrous_conv2d(net, weights_init, dilation, padding='SAME')
+                if bias_init:
+                    net = tf.nn.bias_add(net, bias_init)
         if norm == 'instance_norm':
             net = instance_norm(net, name=name, one_hot_style_vector=one_hot_style_vector, reuse=reuse)
         elif norm == 'batch_norm':
@@ -55,15 +61,16 @@ def conv_layer(net, num_filters, filter_size, strides, elu=True, mirror_padding=
         return net
 
 
-def conv_tranpose_layer(net, num_filters, filter_size, strides, elu=True, mirror_padding=True,
+
+def conv_tranpose_layer(net, num_filters, filter_size, strides, with_bias = True, elu=True, mirror_padding=True,
                         one_hot_style_vector=None, norm='instance_norm', name='', reuse=False):
-    # type: (tf.Tensor, int, int, int, bool, bool, Union[None,tf.Tensor], str, str, bool) -> tf.Tensor
+    # type: (tf.Tensor, int, int, int, bool, bool, bool, Union[None,tf.Tensor], str, str, bool) -> tf.Tensor
     """
     Same as the conv_layer function except that it is now doing convolution tranpose (aka deconvolution). For detailed
     documentation for each variable, please refer to that function.
     """
     with tf.variable_scope('conv_tranpose_layer' + name, reuse=reuse):
-        weights_init = conv_init_vars(net, num_filters, filter_size, transpose=True, name=name, reuse=reuse)
+        weights_init, bias_init = conv_init_vars(net, num_filters, filter_size, with_bias=with_bias, transpose=True, name=name, reuse=reuse)
 
         batch_size, rows, cols, in_channels = [i.value for i in net.get_shape()]
         new_rows, new_cols = int(rows * strides), int(cols * strides)
@@ -72,9 +79,11 @@ def conv_tranpose_layer(net, num_filters, filter_size, strides, elu=True, mirror
         strides_shape = [1, strides, strides, 1]
 
         if mirror_padding:
-            net = conv2d_transpose_mirror_padding(net, weights_init, None, tf_shape, filter_size, stride=strides)
+            net = conv2d_transpose_mirror_padding(net, weights_init, bias_init, tf_shape, filter_size, stride=strides)
         else:
             net = tf.nn.conv2d_transpose(net, weights_init, tf_shape, strides_shape, padding='SAME')
+            if bias_init:
+                net = tf.nn.bias_add(net, bias_init)
 
         if norm == 'instance_norm':
             net = instance_norm(net, name=name, one_hot_style_vector=one_hot_style_vector, reuse=reuse)
@@ -154,8 +163,8 @@ def batch_norm(input_layer, name='', reuse=False):
         return return_val
 
 
-def conv_init_vars(net, out_channels, filter_size, transpose=False, name='', reuse=False):
-    # type: (tf.Tensor, int, int, bool, str, bool) -> tf.Tensor
+def conv_init_vars(net, out_channels, filter_size, with_bias = True, transpose=False, name='', reuse=False):
+    # type: (tf.Tensor, int, int, bool, bool, str, bool) -> Tuple[tf.Tensor,Union[tf.Tensor,None]]
     """
     For meaning of each variable, please refer to the documentation in the "conv_layer" function. They're the same.
     "out_channels" is just "num_filters".
@@ -171,7 +180,15 @@ def conv_init_vars(net, out_channels, filter_size, transpose=False, name='', reu
 
         weights_init = tf.get_variable('weights_init', shape=weights_shape, dtype=tf.float32,
                                        initializer=weights_initializer)
-        return weights_init
+        if with_bias:
+            bias_shape = [out_channels]
+            bias_init =  tf.get_variable('bias_init', shape=bias_shape, dtype=tf.float32,
+                                       initializer=weights_initializer)
+        else:
+            bias_init = None
+
+        assert (with_bias is False or bias_init is not None)
+        return weights_init, bias_init
 
 
 def fully_connected(net, out_channels, activation_fn=None, name='', reuse=False):
@@ -226,7 +243,7 @@ def conv2d_mirror_padding(input_layer, w, b, kernel_size, stride=1, dilation=1):
 
 
 def conv2d_transpose_mirror_padding(input_layer, w, b, output_shape, kernel_size, stride=1):
-    # type: (tf.Tensor, Union[tf.Tensor,tf.Variable], Union[tf.Tensor,tf.Variable], int, int) -> tf.Tensor
+    # type: (tf.Tensor, Union[tf.Tensor,tf.Variable], Union[tf.Tensor,tf.Variable, None], int, int) -> tf.Tensor
     """
     Apply mirror padding before doing a transposed convolution on the input layer.
     :param input_layer: Input tensor.
