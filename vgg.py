@@ -53,8 +53,11 @@ def net(data_path, input_image):
 # Given the path to vgg net, read the data and compute the mean pixel.
 def read_net(data_path):
     data = scipy.io.loadmat(data_path)
-    mean = data['normalization'][0][0][0]
-    mean_pixel = np.mean(mean, axis=(0, 1))
+    if 'normalization' in data:
+        mean = data['normalization'][0][0][0]
+        mean_pixel = np.mean(mean, axis=(0, 1))
+    else:
+        mean_pixel = np.array([123.68, 103.939, 116.779])
     return data, mean_pixel
 
 # Given the data from scipy.io.loadmat(data_path), generate the net directly
