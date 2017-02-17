@@ -104,12 +104,12 @@ args = parser.parse_args()
 
 print u'GPU: {}'.format(args.gpu)
 
-p = painter.Painter(gpu=args.gpu,save_dir=args.save_dir)
+p = painter.Painter(save_dir=args.save_dir, gpu=args.gpu, gpu_fraction=args.gpu_fraction)
 
 httpd = BaseHTTPServer.HTTPServer((args.host, args.port), MyHandler)
 print u'serving at', args.host, u':', args.port
 httpd.serve_forever()
 
 """
-python server.py --gpu=0 --save_dir=model/feed_forward_first_38_imgs-1024
+python server.py --gpu=0 --save_dir=model/feed_forward_first_38_imgs-1024 --host
 """

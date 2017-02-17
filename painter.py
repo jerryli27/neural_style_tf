@@ -17,7 +17,7 @@ class Painter(object):
     def colorize(self, id_str,style_weights):
         one_hot_style_vector = np.array([style_weights])
         output = self.painter.stylize(os.path.join('./static/images/line/', id_str + '.png'), one_hot_style_vector)
-        imsave(self.outdir + id_str + u"_" + unicode(0) + u".jpg", output[0])
+        imsave(self.outdir + id_str + u"_" + unicode(0) + u".jpg", output)
 
 
 if __name__ == u'__main__':
