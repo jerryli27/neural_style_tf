@@ -7,7 +7,7 @@ from general_util import *
 
 if __name__=='__main__':
     # First download the required files.
-    download_if_not_exist('http://www.vlfeat.org/matconvnet/models/imagenet-vgg-verydeep-19.mat', 'imagenet-vgg-verydeep-19.mat', 'Pretrained vgg 19')
+    download_if_not_exist('http://www.vlfeat.org/matconvnet/models/beta16/imagenet-vgg-verydeep-19.mat', 'imagenet-vgg-verydeep-19.mat', 'Pretrained vgg 19')
     download_if_not_exist('https://raw.githubusercontent.com/anishathalye/neural-style/master/examples/1-content.jpg',
                           'stylize_examples/1-content.jpg', 'Example content image')
     download_if_not_exist('https://raw.githubusercontent.com/anishathalye/neural-style/master/examples/1-style.jpg',

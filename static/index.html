@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width" />
+  
+  <title>Fast Neural Style</title>
+
+
+  <!-- filestart -->
+  <script src="jquery.min.js"></script>
+      <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>-->
+
+
+  <!-- jQuery UI -->
+      <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+      <!-- bootstrap -->
+      <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+      <script src="bootstrap/js/bootstrap.min.js"></script>
+      <link href="bootstrap/css/bootstrap-slider.min.css" rel="stylesheet" media="screen">
+      <script src="bootstrap/js/bootstrap-slider.min.js"></script>
+
+      <!-- main -->
+      <script type="text/javascript" src="paints_chainer.js"></script>
+  <!-- fileend -->
+</head>
+<body>
+
+  <div id="content">
+
+    <div class="content-box">
+ 
+      <div class="navbar navbar-inverse">
+        <div class="navbar-inner">
+          <a class="brand" href="#">PaintsChainer</a>
+          <ul class="nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="https://github.com/jerryli27/neural_style_tf">github</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <center id="btn_pane" style="width:1250px; margin-left:auto; margin-right:auto; display:block" >
+      <pre>
+      <i class="icon-picture"></i> Set Scketch : <input id="load_line_file" type="file"> <button id="submit" class="btn btn-large btn-primary"><i class="icon-edit icon-white"></i> submit</button> <span id="painting_label" style="display:none" >NOW COLORING ...</span>
+      </pre>
+      <div id="options" style="display:none">
+        <label>url:<input id="load_line_url" name="url"></label> <button id="set_line_url">set</button> 
+        <label>blur_k<input id="blur_k" type="number" name="blur"></label> 
+      </div>
+
+      </center>
+      
+      <div>
+
+      <center id="img_pane" style="width:auto; margin-left:auto; margin-right:auto; display:block" >
+      <!--<div id="wPaint" style="position:relative; float:left; width:512px; height:512px; background-color:rgba(0,0,255,0); margin:2px; border:solid 1px;">-->
+         <!--<img id="background" style="max-width:512px; max-height:512px;"/>-->
+      <!--</div>-->
+      <div>
+         <img id="background" style="position:relative; float:left; max-width:45%;"/> <!--style="max-width:512px; max-height:512px;"-->
+        <img id="output" style="position:relative; float:right; max-width:45%;" src=""/>
+      </div>
+
+      </center>
+
+        <div class="container">
+          <h2>Style Weight Control</h2>
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Style image</th>
+                <th>Style weight</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><img src="feed_forward_style_images/1.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+                <td><input id="style_weight_0" data-slider-id="style_weight_0_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="1.0"/></td>
+              </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/2.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_1" data-slider-id="style_weight_1_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/3.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_2" data-slider-id="style_weight_2_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/4.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_3" data-slider-id="style_weight_3_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/5.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_4" data-slider-id="style_weight_4_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/6.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_5" data-slider-id="style_weight_5_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/7.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_6" data-slider-id="style_weight_6_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/8.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_7" data-slider-id="style_weight_7_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/9.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_8" data-slider-id="style_weight_8_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/10.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_9" data-slider-id="style_weight_9_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/11.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_10" data-slider-id="style_weight_10_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/12.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_11" data-slider-id="style_weight_11_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/13.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_12" data-slider-id="style_weight_12_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/14.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_13" data-slider-id="style_weight_13_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/15.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_14" data-slider-id="style_weight_14_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/16.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_15" data-slider-id="style_weight_15_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/17.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_16" data-slider-id="style_weight_16_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/18.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_17" data-slider-id="style_weight_17_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/19.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_18" data-slider-id="style_weight_18_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/20.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_19" data-slider-id="style_weight_19_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/21.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_20" data-slider-id="style_weight_20_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/22.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_21" data-slider-id="style_weight_21_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/23.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_22" data-slider-id="style_weight_22_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/24.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_23" data-slider-id="style_weight_23_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/25.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_24" data-slider-id="style_weight_24_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/26.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_25" data-slider-id="style_weight_25_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/27.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_26" data-slider-id="style_weight_26_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/28.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_27" data-slider-id="style_weight_27_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/29.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_28" data-slider-id="style_weight_28_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/30.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_29" data-slider-id="style_weight_29_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/31.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_30" data-slider-id="style_weight_30_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/32.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_31" data-slider-id="style_weight_31_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/33.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_32" data-slider-id="style_weight_32_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/34.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_33" data-slider-id="style_weight_33_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/35.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_34" data-slider-id="style_weight_34_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/36.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_35" data-slider-id="style_weight_35_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/37.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_36" data-slider-id="style_weight_36_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+            <tr>
+            <td><img src="feed_forward_style_images/38.jpg" class="img-thumbnail" style="max-height:128px;"></td>
+            <td><input id="style_weight_37" data-slider-id="style_weight_37_Slider" type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.0"/></td>
+            </tr>
+
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+      <div style="width:1250px; margin-left:auto; margin-right:auto;">
+      <br/>
+      <div style= "margin-left:40px; ">
+        <ul>
+         <li>1: Upload an image that you wish to apply style to.</li>
+         <li>2: Choose and mix weights for each style</li>
+         <li>3: Push submit button to see the result</li>
+        </ul>
+      </div>
+ 
+     <script type="text/javascript">
+     </script>
+    </div>
+  </div>
+
+  
+</body>
+</html>

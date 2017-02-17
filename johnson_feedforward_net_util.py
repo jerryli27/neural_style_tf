@@ -9,7 +9,7 @@ from typing import List
 from conv_util import *
 
 
-def net(image, mirror_padding = True, one_hot_style_vector = None, reuse = False):
+def net(image, mirror_padding = True, allow_resize_output = True, one_hot_style_vector = None, reuse = False):
     # type: (tf.Tensor, bool, Union[None,tf.Tensor], bool) -> tf.Tensor
     """
     The network is a generator network that takes an image, tries to apply some nonlinear transformation, and outputs
@@ -62,9 +62,11 @@ def net(image, mirror_padding = True, one_hot_style_vector = None, reuse = False
     image_shape = image.get_shape().as_list()
     final_shape = preds.get_shape().as_list()
     if not (image_shape[0] == final_shape[0] and image_shape[1] == final_shape[1] and image_shape[2] == final_shape[2]):
-        print('image_shape and final_shape are different. image_shape = %s and final_shape = %s' % (
-        str(image_shape), str(final_shape)))
-        raise AssertionError
+        if allow_resize_output:
+            preds = tf.image.resize_area(preds, (image_shape[1],image_shape[2]))
+        else:
+            raise AssertionError('image_shape and final_shape are different. image_shape = %s and final_shape = %s' % (
+            str(image_shape), str(final_shape)))
     return preds
 
 def get_johnson_scale_offset_var():

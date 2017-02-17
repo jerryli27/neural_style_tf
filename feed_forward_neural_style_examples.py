@@ -11,7 +11,7 @@ if __name__=='__main__':
           "You can download it here http://msvocds.blob.core.windows.net/coco2014/train2014.zip")
 
     download_if_not_exist(
-        'http://www.vlfeat.org/matconvnet/models/imagenet-vgg-verydeep-19.mat',
+        'http://www.vlfeat.org/matconvnet/models/beta16/imagenet-vgg-verydeep-19.mat',
         'imagenet-vgg-verydeep-19.mat', 'Pretrained vgg 19')
     download_if_not_exist(
         'https://raw.githubusercontent.com/anishathalye/neural-style/master/examples/1-style.jpg',
