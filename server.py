@@ -74,8 +74,11 @@ class MyHandler(CGIHTTPServer.CGIHTTPRequestHandler):
                 style_weights = [1] + [0]* 37
         else:
             style_weights = [1] + [0]* 37
+        style_weights = np.array(style_weights)
+        if np.sum(style_weights) != 0:
+            style_weights = style_weights / (np.sum(style_weights))
 
-        p.colorize(id_str,np.array(style_weights))
+        p.colorize(id_str,style_weights)
 
         content = str(
             "{ 'message':'The command Completed Successfully' , 'Status':'200 OK','success':true , 'used':" + str(
