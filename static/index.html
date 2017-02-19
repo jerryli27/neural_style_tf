@@ -38,7 +38,7 @@
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#">github</a></li>
+                    <li><a href="https://github.com/jerryli27/neural_style_tf">github</a></li>
                 </ul>
             </div>
         </div>
@@ -55,51 +55,59 @@
                         <img class="rounded-circle" src="../stylize_examples/1-content.jpg" alt="Source image" width="140" height="140">
                         <h2>Upload</h2>
                         <p>Upload an image that you wish to apply style to.</p>
-                        <p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>
+                        <!--<p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>-->
                     </div>
                     <!-- /.col-lg-4 -->
                     <div class="col-lg-4">
                         <img class="rounded-circle" src="../stylize_examples/1-style.jpg" alt="Style image" width="140" height="140">
                         <h2>Choose</h2>
                         <p>Choose and mix weights for each style</p>
-                        <p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>
+                        <!--<p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>-->
                     </div>
                     <!-- /.col-lg-4 -->
                     <div class="col-lg-4">
                         <img class="rounded-circle" src="../stylize_examples/output/1_result.jpg" alt="Result" width="140" height="140">
                         <h2>Submit</h2>
                         <p>Push submit button to see the result</p>
-                        <p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>
+                        <!--<p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>-->
                     </div>
                     <!-- /.col-lg-4 -->
                 </div>
             <!-- /.row -->
             </div>
 
-            <center id="btn_pane" style="width:1250px; margin-left:auto; margin-right:auto; display:block" >
+            <center id="btn_pane" style="width:1250px; margin-left:auto; margin-right:auto; display:block; padding-bottom: 20px;" >
 
-                <div class="container-fluid bg-2 text-center">
+                <div class="container-fluid bg-2 ">
                   <h3 class="margin">Upload an image:</h3>
                   <input id="load_line_file" type="file" class="file" data-show-preview="false">
-
-                    <span id="painting_label" style="display:none" >NOW COLORING ...</span>
-                  <button id="submit" class="btn btn-large btn-primary"><i class="icon-edit icon-white"></i> submit</button>
+                  <span id="painting_label" style="display:none" >Now Painting ...</span>
+                  <button id="submit" class="btn btn-large btn-primary"><i class="icon-edit icon-white"></i> Paint it!</button>
                 </div>
-                <div id="options" style="display:none">
+                <div id="options" style="display:none;">
                     <label>url:<input id="load_line_url" name="url"></label> <button id="set_line_url">set</button>
                     <label>blur_k<input id="blur_k" type="number" name="blur"></label>
                 </div>
+
+            <div class="row" id="img_pane">
+                <div class="col-md-5 pull-left">
+                    <div class="thumbnail">
+                        <a id="background_hyperlink" href="" target="_blank">
+                            <img id="background" style="max-width:100%"/>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-5 pull-right">
+                    <div class="thumbnail">
+                        <a id="output_hyperlink" href="" target="_blank">
+                            <img id="output" style="max-width:100%" src=""/>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
             </center>
             <div>
-                <center id="img_pane" style="width:auto; margin-left:auto; margin-right:auto; display:block" >
-                    <!--<div id="wPaint" style="position:relative; float:left; width:512px; height:512px; background-color:rgba(0,0,255,0); margin:2px; border:solid 1px;">-->
-                    <!--<img id="background" style="max-width:512px; max-height:512px;"/>-->
-                    <!--</div>-->
-                    <div>
-                        <img id="background" style="position:relative; float:left; max-width:45%;"/> <!--style="max-width:512px; max-height:512px;"-->
-                        <img id="output" style="position:relative; float:right; max-width:45%;" src=""/>
-                    </div>
-                </center>
                 <div class="container">
                     <h2>Style Weight Control</h2>
                     <table class="table table-hover">

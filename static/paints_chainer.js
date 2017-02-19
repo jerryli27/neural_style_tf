@@ -121,6 +121,7 @@ $(function() {
                         console.log("uploaded")
                         var now = new Date().getTime();
                         $('#output').attr('src', '/static/images/out/'+image_id+'_0.jpg?' + now);
+                        $('#output_hyperlink').attr('href', '/static/images/out/'+image_id+'_0.jpg?' + now);
                         endPaint()
                 }
               });
@@ -136,6 +137,7 @@ $(function() {
               image_id = uniqueid()
 
               $("#background").attr("src", src );
+              $("#background_hyperlink").attr("href", src );
 //              $("#wPaint")
 //                 .width($("#background").width())
 //                 .height($("#background").height());
