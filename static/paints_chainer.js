@@ -21,7 +21,7 @@ $(function() {
 
         $('#img_pane').hide()
 
-
+        $("#load_line_file").fileinput({'showUpload':false, 'previewFileType':'any'});
         var style_weight_sliders = []
 
         for (var i = 0; i < 38; i += 1) {
