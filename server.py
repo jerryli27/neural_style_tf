@@ -74,7 +74,7 @@ class MyHandler(CGIHTTPServer.CGIHTTPRequestHandler):
                 style_weights = [1] + [0]* 37
         else:
             style_weights = [1] + [0]* 37
-        style_weights = np.array(style_weights)
+        style_weights = np.array(style_weights, dtype=np.float32)
         if np.sum(style_weights) != 0:
             style_weights = style_weights / (np.sum(style_weights))
 
