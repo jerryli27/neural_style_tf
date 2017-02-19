@@ -57,15 +57,15 @@ $(function() {
           select_src( $("#load_line_url").val() )
         });
 
-        
-        $('#output').bind('load', function(){
-          $('#output')
-            .height( $('#background').height() )
-            .width( $('#background').width() )
-          $('#img_pane')
-            .width( $('#output').width()*2.3+24 )
-            .height( $('#output').height()+20 )
-        });
+        // No need to reset height and width.
+//        $('#output').bind('load', function(){
+//          $('#output')
+//            .height( $('#background').height() )
+//            .width( $('#background').width() )
+//          $('#img_pane')
+//            .width( $('#output').width()*2.3+24 )
+//            .height( $('#output').height()+20 )
+//        });
 
 
 //--- functions
