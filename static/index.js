@@ -108,6 +108,7 @@ $(function() {
             ajaxData.append('blur', $("#blur_k").val() );
             ajaxData.append('id', image_id );
             ajaxData.append('style_weights',getStyleWeightValues().join(','));
+            ajaxData.append('mode','single');
             $.ajax({
                 url: "/post",
                 data: ajaxData,

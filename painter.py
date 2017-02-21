@@ -19,6 +19,15 @@ class Painter(object):
         output = self.painter.stylize(os.path.join('./static/images/line/', id_str + '.png'), one_hot_style_vector)
         imsave(self.outdir + id_str + u"_" + unicode(0) + u".jpg", output)
 
+    def batch_colorize(self,id_str):
+        for style_i in range(38):
+            one_hot_style_vector = np.zeros((1,38))
+            one_hot_style_vector[0,style_i] = 1
+
+            # one_hot_style_vector = np.array([style_weights])
+            output = self.painter.stylize(os.path.join('./static/images/line/', id_str + '.png'), one_hot_style_vector)
+            imsave(self.outdir + id_str + u"_" + unicode(style_i) + u".jpg", output)
+
 
 if __name__ == u'__main__':
     painter = Painter(None)

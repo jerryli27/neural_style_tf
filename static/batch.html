@@ -1,0 +1,274 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width" />
+        <title>Fast Neural Style</title>
+        <!-- filestart -->
+        <!--<script src="jquery.min.js"></script>-->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <!-- jQuery UI -->
+        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+        <!-- bootstrap -->
+        <!--<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">-->
+        <!--<script src="bootstrap/js/bootstrap.min.js"></script>-->
+        <link href="bootstrap/css/bootstrap-slider.min.css" rel="stylesheet" media="screen">
+        <script src="bootstrap/js/bootstrap-slider.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <link href="css/fileinput.css" media="all" rel="stylesheet" type="text/css"/>
+        <script src="js/fileinput.js" type="text/javascript"></script>
+        <!-- main -->
+        <script type="text/javascript" src="batch.js"></script>
+        <!-- fileend -->
+    </head>
+    <body>
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.html">Neural Style</a>
+                <a class="navbar-brand" href="batch.html">Try all styles</a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="https://github.com/jerryli27/neural_style_tf">github</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+        <div id="content">
+        <div class="content-box">
+
+
+            <div class="container marketing text-center">
+                <!-- Three columns of text below the carousel -->
+                <div class="row">
+                    <div class="col-lg-4">
+                        <img class="rounded-circle" src="../stylize_examples/1-content.jpg" alt="Source image" width="140" height="140">
+                        <h2>Upload</h2>
+                        <p>Upload an image that you wish to apply style to.</p>
+                        <!--<p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>-->
+                    </div>
+                    <!-- /.col-lg-4 -->
+                    <div class="col-lg-4">
+                        <img class="rounded-circle" src="../stylize_examples/1-style.jpg" alt="Style image" width="140" height="140">
+                        <h2>Choose</h2>
+                        <p>Choose and mix weights for each style</p>
+                        <!--<p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>-->
+                    </div>
+                    <!-- /.col-lg-4 -->
+                    <div class="col-lg-4">
+                        <img class="rounded-circle" src="../stylize_examples/output/1_result.jpg" alt="Result" width="140" height="140">
+                        <h2>Submit</h2>
+                        <p>Push submit button to see the result</p>
+                        <!--<p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>-->
+                    </div>
+                    <!-- /.col-lg-4 -->
+                </div>
+            <!-- /.row -->
+            </div>
+
+            <center id="btn_pane" style="width:1250px; margin-left:auto; margin-right:auto; display:block; padding-bottom: 20px;" >
+
+                <div class="container-fluid bg-2 ">
+                  <h3 class="margin">Upload an image:</h3>
+                  <input id="load_line_file" type="file" class="file" data-show-preview="false">
+                  <span id="painting_label" style="display:none" >Now Painting ...</span>
+                  <button id="submit" class="btn btn-large btn-primary"><i class="icon-edit icon-white"></i> Paint it!</button>
+                </div>
+                <div id="options" style="display:none;">
+                    <label>url:<input id="load_line_url" name="url"></label> <button id="set_line_url">set</button>
+                    <label>blur_k<input id="blur_k" type="number" name="blur"></label>
+                </div>
+
+            <div class="row" id="img_pane">
+                <div class="col-md-5 pull-left">
+                    <div class="thumbnail">
+                        <a id="background_hyperlink" href="" target="_blank">
+                            <img id="background" style="max-width:100%;display: block;"/>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            </center>
+            <div>
+                <div class="container">
+                    <h2>Style Weight Control</h2>
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Style image</th>
+                                <th>Style weight</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><img src="feed_forward_style_images/1.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_0" href="" target="_blank"><img id="output_img_0" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/2.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_1" href="" target="_blank"><img id="output_img_1" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/3.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_2" href="" target="_blank"><img id="output_img_2" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/4.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_3" href="" target="_blank"><img id="output_img_3" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/5.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_4" href="" target="_blank"><img id="output_img_4" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/6.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_5" href="" target="_blank"><img id="output_img_5" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/7.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_6" href="" target="_blank"><img id="output_img_6" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/8.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_7" href="" target="_blank"><img id="output_img_7" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/9.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_8" href="" target="_blank"><img id="output_img_8" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/10.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_9" href="" target="_blank"><img id="output_img_9" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/11.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_10" href="" target="_blank"><img id="output_img_10" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/12.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_11" href="" target="_blank"><img id="output_img_11" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/13.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_12" href="" target="_blank"><img id="output_img_12" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/14.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_13" href="" target="_blank"><img id="output_img_13" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/15.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_14" href="" target="_blank"><img id="output_img_14" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/16.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_15" href="" target="_blank"><img id="output_img_15" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/17.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_16" href="" target="_blank"><img id="output_img_16" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/18.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_17" href="" target="_blank"><img id="output_img_17" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/19.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_18" href="" target="_blank"><img id="output_img_18" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/20.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_19" href="" target="_blank"><img id="output_img_19" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/21.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_20" href="" target="_blank"><img id="output_img_20" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/22.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_21" href="" target="_blank"><img id="output_img_21" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/23.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_22" href="" target="_blank"><img id="output_img_22" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/24.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_23" href="" target="_blank"><img id="output_img_23" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/25.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_24" href="" target="_blank"><img id="output_img_24" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/26.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_25" href="" target="_blank"><img id="output_img_25" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/27.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_26" href="" target="_blank"><img id="output_img_26" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/28.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_27" href="" target="_blank"><img id="output_img_27" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/29.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_28" href="" target="_blank"><img id="output_img_28" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/30.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_29" href="" target="_blank"><img id="output_img_29" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/31.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_30" href="" target="_blank"><img id="output_img_30" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/32.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_31" href="" target="_blank"><img id="output_img_31" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/33.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_32" href="" target="_blank"><img id="output_img_32" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/34.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_33" href="" target="_blank"><img id="output_img_33" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/35.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_34" href="" target="_blank"><img id="output_img_34" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/36.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_35" href="" target="_blank"><img id="output_img_35" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/37.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_36" href="" target="_blank"><img id="output_img_36" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                            <tr>
+                                <td><img src="feed_forward_style_images/38.jpg" class="img-thumbnail" style="max-height:512px;"></td>
+                                <td><a id="output_hyperlink_37" href="" target="_blank"><img id="output_img_37" src="" class="img-thumbnail" style="max-height:512px;"/></a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+
