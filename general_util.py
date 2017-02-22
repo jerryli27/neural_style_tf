@@ -65,7 +65,7 @@ def read_and_resize_images(dirs, height=None, width=None, bw=False, rgba=False):
     if isinstance(dirs, list):
         images = [read_and_resize_images(d, height, width) for d in dirs]
         return images
-    elif isinstance(dirs, str):
+    elif isinstance(dirs, str) or isinstance(dirs, unicode):
         image_1 = imread(dirs)
         # If there is no width and height, we automatically take the first image's width and height and apply to all the
         # other ones.
@@ -82,6 +82,8 @@ def read_and_resize_images(dirs, height=None, width=None, bw=False, rgba=False):
             else:
                 target_shape = (image_1.shape[0], image_1.shape[1])
         return imread(dirs, shape=target_shape, bw=bw, rgba=rgba)
+    else:
+        raise TypeError("Invalid input type for variable 'dirs' to function read_and_resize_images()")
 
 
 def read_and_resize_batch_images(dirs, height, width, dtype=np.float32):

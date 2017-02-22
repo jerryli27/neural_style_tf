@@ -23,6 +23,7 @@ from io import open
 # sys.path.append('./cgi-bin/wnet')
 sys.path.append(u'./cgi-bin/paint_x2_unet')
 import painter
+from neural_style_slow_online import slow_stylize
 
 
 class MyHandler(CGIHTTPServer.CGIHTTPRequestHandler):
@@ -52,47 +53,84 @@ class MyHandler(CGIHTTPServer.CGIHTTPRequestHandler):
         else:
             id_str = u"test"
 
+
+        content_dir = None
+        style_dirs = []
+        output_dir = './static/images/out/'+id_str+'_0.jpg'
         if u"line" in form:
            bin1 = form[u"line"][0]
            bin1 = bin1.decode().split(u",")[1]
            bin1 = base64.b64decode(bin1.encode())
-           fout1 = open ( u"./static/images/line/"+id_str+u".png", u'wb')
+           content_dir = u"./static/images/line/"+id_str+u".png"
+           fout1 = open (content_dir, u'wb')
            fout1.write (bin1)
            fout1.close()
-        if u"ref" in form:
-            bin2 = form[u"ref"][0]
+        if u"style" in form:
+            bin2 = form[u"style"][0]
             bin2 = bin2.decode().split(u",")[1]
             bin2 = base64.b64decode(bin2.encode())
-            fout2 = open(u"./static/images/ref/" + id_str + u".png", u'wb')
+            style_dirs.append(u"./static/images/style/" + id_str + u".png")
+            fout2 = open(style_dirs[-1], u'wb')
             fout2.write(bin2)
             fout2.close()
 
         assert "mode" in form
-        if form["mode"][0].decode() == "batch":
-            p.batch_colorize(id_str)
-        else:
 
-            if "style_weights" in form:
-                style_weights = form["style_weights"][0].split(',')
-                if len(style_weights) != 38:
-                    print('incorrect style_weights format. resume to default')
-                    style_weights = [1] + [0]* 37
+        if form["mode"][0].decode() == "slow":
+            current_image_dir = None
+            for current_image_dir in slow_stylize(content_dir,style_dirs,output_dir):
+                # # TODO: can it send multiple response to one request?? No...
+                # content = str(
+                #     "{ 'message':'Still generating' , 'Status':'200 OK','success':true , 'used':%s, 'output_dir':'%s'}"
+                #     % (str(args.gpu), current_image_dir)).encode("UTF-8")
+                # self.send_response(200)
+                # self.send_header(u"Content-type", u"application/json")
+                # self.send_header(u"Content-Length", len(content))
+                # self.end_headers()
+                # self.wfile.write(content)
+                pass
+            if current_image_dir is None:
+                # TODO: Send error message instead of raising an error.
+                raise AssertionError('Failed to do slow stylize.')
             else:
-                style_weights = [1] + [0]* 37
-            style_weights = np.array(style_weights, dtype=np.float32)
-            if np.sum(style_weights) != 0:
-                style_weights = style_weights / (np.sum(style_weights))
+                content = str(
+                    "{ 'message':'The command Completed Successfully' , 'Status':'200 OK','success':true , 'used':%s, 'output_dir':'%s'}"
+                    % (str(args.gpu), current_image_dir)).encode("UTF-8")
+                self.send_response(200)
+                self.send_header(u"Content-type", u"application/json")
+                self.send_header(u"Content-Length", len(content))
+                self.end_headers()
+                self.wfile.write(content)
 
-            p.colorize(id_str,style_weights)
+        else:
+            if form["mode"][0].decode() == "batch":
+                p.batch_colorize(id_str)
+            elif form["mode"][0].decode() == "single":
+                if "style_weights" in form:
+                    style_weights = form["style_weights"][0].split(',')
+                    if len(style_weights) != 38:
+                        print('incorrect style_weights format. resume to default')
+                        style_weights = [1] + [0]* 37
+                else:
+                    style_weights = [1] + [0]* 37
+                style_weights = np.array(style_weights, dtype=np.float32)
+                if np.sum(style_weights) != 0:
+                    style_weights = style_weights / (np.sum(style_weights))
 
-        content = str(
-            "{ 'message':'The command Completed Successfully' , 'Status':'200 OK','success':true , 'used':" + str(
-                args.gpu) + "}").encode("UTF-8")
-        self.send_response(200)
-        self.send_header(u"Content-type", u"application/json")
-        self.send_header(u"Content-Length", len(content))
-        self.end_headers()
-        self.wfile.write(content)
+                p.colorize(id_str,style_weights)
+            else:
+                raise AttributeError("Unacceptable input mode in post request")
+
+            # TODO: add fail mode.
+            content = str(
+                "{ 'message':'The command Completed Successfully' , 'Status':'200 OK','success':true , 'used':" + str(
+                    args.gpu) + "}").encode("UTF-8")
+            self.send_response(200)
+            self.send_header(u"Content-type", u"application/json")
+            self.send_header(u"Content-Length", len(content))
+            self.end_headers()
+            self.wfile.write(content)
+
 
         return
 

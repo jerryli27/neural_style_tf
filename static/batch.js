@@ -22,16 +22,6 @@ $(function() {
         $('#img_pane').hide()
 
         $("#load_line_file").fileinput({'showUpload':false, 'previewFileType':'any'});
-        var style_weight_sliders = []
-
-        for (var i = 0; i < 38; i += 1) {
-            var current_slider = $("#style_weight_".concat(i.toString())).bootstrapSlider({
-                formatter: function(value) {
-                    return 'Current value: ' + value;
-                }
-            });//.on('slide', colorize).data('slider');
-            style_weight_sliders.push(current_slider);
-        }
 
         //$('#line_form').on('change', 'input[type="file"]', function(e) {
         $('#load_line_file').on('change', function(e) {
@@ -96,7 +86,6 @@ $(function() {
             startPaint()
             var ajaxData = new FormData();
             ajaxData.append('line', $("#background").attr("src") );
-//            ajaxData.append('ref', $("#wPaint").wPaint("image") );
             ajaxData.append('blur', $("#blur_k").val() );
             ajaxData.append('id', image_id );
             ajaxData.append('mode','batch');

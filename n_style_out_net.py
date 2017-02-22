@@ -159,7 +159,8 @@ class Stylizer:
     
         # Define tensorflow placeholders and variables.
         self.graph = tf.Graph()
-        self.device_string = '/cpu:0' if gpu_id < 0 else ("/gpu:%d" %gpu_id)
+        # self.device_string = '/cpu:0' if gpu_id < 0 else ("/gpu:%d" %gpu_id) # This one won't work for some reason
+        self.device_string = '/cpu:0' if gpu_id < 0 else ''
         with self.graph.as_default(), tf.device(self.device_string):
             if self.num_styles == 1:
                 self.one_hot_style_vector = None
@@ -289,7 +290,6 @@ class Stylizer:
                 raise AssertionError
 
             generated_image = self.image.eval(feed_dict=feed_dict, session=self.sess)
-            # Can't return because we are in a generator in python 2.7. So do a one-time yield instead.
             # No need to unprocess the generated image because we've preprocessed the generated image before
             # feeding it to the network.
             return scipy.misc.imresize(generated_image[0, :, :, :], (self.input_shape[1], self.input_shape[2]))

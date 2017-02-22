@@ -1,37 +1,25 @@
 $(function() {
         image_id = "test_id"
-
-//        $('#wPaint').wPaint({
-//            path: '/static/wPaint/',
-//            menuOffsetLeft: -35,
-//            menuOffsetTop: -50,
-//        });
-
         $("#painting_label").hide();
-        //$("#submit").prop("disabled",true);
         $("#submit").prop("disabled",false);
 
         $("#submit").click( function(){
             if( !$("#background").attr("src") ){
-                alert( "select a file" );
+                alert( "Please upload a content file" );
             } else {
-              colorize();
+                if( !$("#style").attr("src") ){
+                    alert( "Please upload a style file" );
+                }
+                else {
+                    colorize();
+                }
             }
         });
 
         $('#img_pane').hide()
 
         $("#load_line_file").fileinput({'showUpload':false, 'previewFileType':'any'});
-        var style_weight_sliders = []
-
-        for (var i = 0; i < 38; i += 1) {
-            var current_slider = $("#style_weight_".concat(i.toString())).bootstrapSlider({
-                formatter: function(value) {
-                    return 'Current value: ' + value;
-                }
-            });//.on('slide', colorize).data('slider');
-            style_weight_sliders.push(current_slider);
-        }
+        $("#load_style_file").fileinput({'showUpload':false, 'previewFileType':'any'});
 
         //$('#line_form').on('change', 'input[type="file"]', function(e) {
         $('#load_line_file').on('change', function(e) {
@@ -44,8 +32,26 @@ $(function() {
           }
 
           reader.onload = (function(file) {
-            console.log("up")
+            console.log("up content")
             return function(e) { select_src( e.target.result ); }
+          })(file);
+
+          reader.readAsDataURL(file);
+        });
+
+
+        $('#load_style_file').on('change', function(e) {
+          var file = e.target.files[0],
+              reader = new FileReader(),
+              $preview = $(".preview");
+
+          if(file.type.indexOf("image") < 0){
+            return false;
+          }
+
+          reader.onload = (function(file) {
+            console.log("up style")
+            return function(e) { select_style( e.target.result ); }
           })(file);
 
           reader.readAsDataURL(file);
@@ -57,26 +63,7 @@ $(function() {
           select_src( $("#load_line_url").val() )
         });
 
-        // No need to reset height and width.
-//        $('#output').bind('load', function(){
-//          $('#output')
-//            .height( $('#background').height() )
-//            .width( $('#background').width() )
-//          $('#img_pane')
-//            .width( $('#output').width()*2.3+24 )
-//            .height( $('#output').height()+20 )
-//        });
-
-
 //--- functions
-
-        function getStyleWeightValues() {
-            style_weight_values = [];
-            for (var i = 0; i < style_weight_sliders.length; i+=1) {
-                style_weight_values.push(style_weight_sliders[i].val());
-            }
-            return style_weight_values;
-        }
 
         function uniqueid(){
             var idstr=String.fromCharCode(Math.floor((Math.random()*25)+65));
@@ -104,10 +91,10 @@ $(function() {
             startPaint()
             var ajaxData = new FormData();
             ajaxData.append('line', $("#background").attr("src") );
+            ajaxData.append('style', $("#style").attr("src") );
             ajaxData.append('blur', $("#blur_k").val() );
             ajaxData.append('id', image_id );
-            ajaxData.append('style_weights',getStyleWeightValues().join(','));
-            ajaxData.append('mode','single');
+            ajaxData.append('mode','slow');
             $.ajax({
                 url: "/post",
                 data: ajaxData,
@@ -120,16 +107,19 @@ $(function() {
                         //location.reload();
                         console.log("uploaded")
                         var now = new Date().getTime();
+
                         $('#output').attr('src', '/static/images/out/'+image_id+'_0.jpg?' + now);
                         $('#output_hyperlink').attr('href', '/static/images/out/'+image_id+'_0.jpg?' + now);
+
+//                        for (var i = 0; i < 38; i+=1) {
+//                            $('#output_img_'.concat(i.toString())).attr('src', '/static/images/out/'+image_id+'_'+ i + '.jpg?' + now);
+//                            $('#output_hyperlink'.concat(i.toString())).attr('href', '/static/images/out/'+image_id+'_'+ i + '.jpg?' + now);
+//                        }
+
                         endPaint()
                 }
               });
         }
-
-//        enable_interactive = function(){
-//          $('.wPaint-canvas').mouseup(colorize)
-//        }
 
         select_src = function(src){
           $("#img_pane").show(
@@ -138,13 +128,20 @@ $(function() {
 
               $("#background").attr("src", src );
               $("#background_hyperlink").attr("href", src );
-//              $("#wPaint")
-//                 .width($("#background").width())
-//                 .height($("#background").height());
-//
-//              $("#wPaint").wPaint('resize');
-              $("#submit").prop("disabled",true)
-              colorize();
+//              $("#submit").prop("disabled",true)
+//              colorize();
+          });
+        };
+
+        select_style = function(src){
+          $("#img_pane").show(
+            "fast", function(){
+              image_id = uniqueid()
+
+              $("#style").attr("src", src );
+              $("#style_hyperlink").attr("href", src );
+//              $("#submit").prop("disabled",true)
+//              colorize();
           });
         };
 

@@ -101,6 +101,8 @@ def stylize(network, content, styles, shape, iterations, content_weight=5.0, sty
         if content_img_style_weight_mask.dtype != np.float32:
             raise AssertionError('The dtype of style_weight_mask must be float32. it is now %s' % str(
                 content_img_style_weight_mask.dtype))
+    if len(styles) == 0:
+        raise AssertionError("Must feed in at least one style image.")
 
     # Append a (1,) in front of the shapes of the style images. So the style_shapes contains (1, height, width, 3).
     # 3 corresponds to rgb.
