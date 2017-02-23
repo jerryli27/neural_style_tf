@@ -114,8 +114,12 @@ class MyHandler(CGIHTTPServer.CGIHTTPRequestHandler):
                 else:
                     style_weights = [1] + [0]* 37
                 style_weights = np.array(style_weights, dtype=np.float32)
+                style_master_weight = float(form["style_master_weight"][0])
+                if style_master_weight <= 0:
+                    print("illegal style_master_weight. It should be positive. received: %f" %(style_master_weight))
+                    style_master_weight = 1.0
                 if np.sum(style_weights) != 0:
-                    style_weights = style_weights / (np.sum(style_weights))
+                    style_weights = style_weights / (np.sum(style_weights)) * style_master_weight
 
                 p.colorize(id_str,style_weights)
             else:

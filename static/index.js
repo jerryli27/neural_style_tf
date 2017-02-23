@@ -24,6 +24,11 @@ $(function() {
         $("#load_line_file").fileinput({'showUpload':false, 'previewFileType':'any'});
         var style_weight_sliders = []
 
+        var style_weight_master_slider = $("#style_master_weight").bootstrapSlider({
+            formatter: function(value) {
+                return 'Current value: ' + value;
+            }
+        });
         for (var i = 0; i < 38; i += 1) {
             var current_slider = $("#style_weight_".concat(i.toString())).bootstrapSlider({
                 formatter: function(value) {
@@ -107,6 +112,7 @@ $(function() {
             ajaxData.append('blur', $("#blur_k").val() );
             ajaxData.append('id', image_id );
             ajaxData.append('style_weights',getStyleWeightValues().join(','));
+            ajaxData.append('style_master_weight',style_weight_master_slider.val());
             ajaxData.append('mode','single');
             $.ajax({
                 url: "/post",
