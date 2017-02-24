@@ -4,13 +4,13 @@ import n_style_out_net
 
 
 class Painter(object):
-    def __init__(self, save_dir, gpu=0, gpu_fraction = 0.5, mat_dir = 'imagenet-vgg-verydeep-19.mat'):
+    def __init__(self, save_dir,num_styles, gpu=0, gpu_fraction = 0.5, mat_dir = 'imagenet-vgg-verydeep-19.mat'):
 
         print u"start"
         self.root = u"./static/images/"
         self.batchsize = 1
         self.outdir = self.root + u"out/"
-        self.painter = n_style_out_net.Stylizer(mat_dir,128,128,38, use_johnson=True, save_dir=save_dir,gpu_id=gpu, gpu_fraction=gpu_fraction)
+        self.painter = n_style_out_net.Stylizer(mat_dir,128,128,num_styles, use_johnson=True, save_dir=save_dir,gpu_id=gpu, gpu_fraction=gpu_fraction)
         print u"load model"
 
 

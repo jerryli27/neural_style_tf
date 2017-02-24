@@ -108,11 +108,11 @@ class MyHandler(CGIHTTPServer.CGIHTTPRequestHandler):
             elif form["mode"][0].decode() == "single":
                 if "style_weights" in form:
                     style_weights = form["style_weights"][0].split(',')
-                    if len(style_weights) != 38:
+                    if len(style_weights) != [args.num_styles]:
                         print('incorrect style_weights format. resume to default')
-                        style_weights = [1] + [0]* 37
+                        style_weights = [1] + [0]* (args.num_styles-1)
                 else:
-                    style_weights = [1] + [0]* 37
+                    style_weights = [1] + [0]* (args.num_styles-1)
                 style_weights = np.array(style_weights, dtype=np.float32)
                 style_master_weight = float(form["style_master_weight"][0])
                 if style_master_weight <= 0:
@@ -150,11 +150,13 @@ parser.add_argument(u'--host', u'-ho', default=u'localhost',
                     help=u'using host')
 parser.add_argument(u'--save_dir', u'-sv', default=u'model/',
                     help=u'directory to trained feed forward network.')
+parser.add_argument(u'--num_styles', u'-ns', type=int, default=38,
+                    help=u'Number of styles')
 args = parser.parse_args()
 
 print u'GPU: {}'.format(args.gpu)
 
-p = painter.Painter(save_dir=args.save_dir, gpu=args.gpu, gpu_fraction=args.gpu_fraction)
+p = painter.Painter(num_styles=args.num_styles, save_dir=args.save_dir, gpu=args.gpu, gpu_fraction=args.gpu_fraction)
 
 httpd = BaseHTTPServer.HTTPServer((args.host, args.port), MyHandler)
 print u'serving at', args.host, u':', args.port

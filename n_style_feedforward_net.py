@@ -214,7 +214,7 @@ def style_synthesis_net(path_to_network, height, width, styles, iterations, batc
 
     # Define tensorflow placeholders and variables.
     with tf.Graph().as_default():
-        if len(styles) == 1:
+        if len(styles) == 0: # TODO: modified temporarily for debugging
             one_hot_style_vector = None
         else:
             print("Detected multiple style image inputs. Entering multi-style mode.")
@@ -222,7 +222,13 @@ def style_synthesis_net(path_to_network, height, width, styles, iterations, batc
                 one_hot_style_vector = tf.placeholder(tf.float32, [1, len(styles)], name='input_style_placeholder')
             else:
                 one_hot_style_vector = tf.get_variable(name='input_style_placeholder',shape=[1, len(styles)], dtype=tf.float32,initializer=tf.constant_initializer())
-                random_style_weight = tf.random_uniform([],maxval=1.0, name='random_style_weight')
+                random_style_weight = tf.random_uniform([1],maxval=1.0, name='random_style_weight')
+
+                style_i_placeholder = tf.placeholder(tf.int32, [], name='style_i_placeholder')
+                clear_one_hot_op = tf.assign(one_hot_style_vector, np.zeros((1, len(styles))))
+                with tf.control_dependencies([clear_one_hot_op]):
+                    update_index = tf.expand_dims(tf.pack((0,style_i_placeholder)),0)
+                    assign_random_one_hot_op =  tf.scatter_nd_update(one_hot_style_vector,update_index , random_style_weight)
 
         if use_johnson:
             if use_semantic_masks:
@@ -622,8 +628,9 @@ def style_synthesis_net(path_to_network, height, width, styles, iterations, batc
                         feed_dict = {content_images: content_pre_list} if not style_only else {}
 
                         if one_hot_style_vector is not None:
-                            sess.run([tf.assign(one_hot_style_vector, np.zeros((1,len(styles))))])
-                            sess.run([tf.assign(one_hot_style_vector[0,style_i], random_style_weight)])
+                            sess.run([assign_random_one_hot_op], feed_dict={style_i_placeholder:style_i})
+                            # TODO: continue testing this until assigining random one hot style vector works.
+                            # sess.run([tf.assign(one_hot_style_vector[0,style_i], random_style_weight)])
                             # feed_dict[one_hot_style_vector] = np.array([[1.0 if style_i == style_j else 0.0 for style_j in range(len(styles))]])
 
                         if use_johnson:
