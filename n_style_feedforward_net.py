@@ -222,7 +222,7 @@ def style_synthesis_net(path_to_network, height, width, styles, iterations, batc
                 one_hot_style_vector = tf.placeholder(tf.float32, [1, len(styles)], name='input_style_placeholder')
             else:
                 one_hot_style_vector = tf.get_variable(name='input_style_placeholder',shape=[1, len(styles)], dtype=tf.float32,initializer=tf.constant_initializer())
-                random_style_weight = tf.random_uniform([1],maxval=1.0, name='random_style_weight')
+                random_style_weight = tf.random_uniform([1],maxval=3.0, name='random_style_weight')
 
                 style_i_placeholder = tf.placeholder(tf.int32, [], name='style_i_placeholder')
                 clear_one_hot_op = tf.assign(one_hot_style_vector, np.zeros((1, len(styles))))

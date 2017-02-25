@@ -108,8 +108,8 @@ class MyHandler(CGIHTTPServer.CGIHTTPRequestHandler):
             elif form["mode"][0].decode() == "single":
                 if "style_weights" in form:
                     style_weights = form["style_weights"][0].split(',')
-                    if len(style_weights) != [args.num_styles]:
-                        print('incorrect style_weights format. resume to default')
+                    if len(style_weights) != args.num_styles:
+                        print('incorrect style_weights format. Expecting length: %d and received vector: %s. Resume to default' %(args.num_styles, str(style_weights)))
                         style_weights = [1] + [0]* (args.num_styles-1)
                 else:
                     style_weights = [1] + [0]* (args.num_styles-1)
