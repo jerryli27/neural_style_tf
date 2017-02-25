@@ -7,16 +7,16 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=u'Fast Neural Style server.')
     parser.add_argument(u'--main_npy_path', u'-mnp', default=u'n_style.npy',
                         help=u'directory to trained feed forward network.')
-    parser.add_argument(u'--style_npy_paths', u'-snp', default=[],
+    parser.add_argument(u'--style_npy_paths', u'-snp', default=[],nargs='+',
                         help=u'directory to trained feed forward network.')
-    parser.add_argument(u'--save_npy_path', u'-mnp', default=u'n_style_combined.npy',
+    parser.add_argument(u'--save_npy_path', default=u'n_style_combined.npy',
                         help=u'directory to trained feed forward network.')
     args = parser.parse_args()
 
     p = painter.Painter(num_styles=args.num_styles, save_dir=args.save_dir)
 
-    main_npy = np.load(args.main_npy_path)
-    style_npys = [np.load(style_npy_path) for style_npy_path in args.style_npy_path]
+    main_npy = np.load(args.main_npy_path).item()
+    style_npys = [np.load(style_npy_path).item() for style_npy_path in args.style_npy_path]
     num_styles = len(style_npys)
 
     variable_names = main_npy.keys()

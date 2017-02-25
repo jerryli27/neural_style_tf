@@ -152,11 +152,18 @@ parser.add_argument(u'--save_dir', u'-sv', default=u'model/',
                     help=u'directory to trained feed forward network.')
 parser.add_argument(u'--num_styles', u'-ns', type=int, default=38,
                     help=u'Number of styles')
+
+parser.add_argument('--do_save_npy', dest='do_save_npy',
+                    help='If true, it loads the weights from an npy file instead of from a checkpoint. '
+                         '(default %(default)s).', action='store_true')
+parser.set_defaults(do_save_npy=False)
+parser.add_argument(u'--npy_path', default=u'n_style_combined_1_to_55.npy',
+                    help=u'directory to a npy file storing combined weights.')
 args = parser.parse_args()
 
 print u'GPU: {}'.format(args.gpu)
 
-p = painter.Painter(num_styles=args.num_styles, save_dir=args.save_dir, gpu=args.gpu, gpu_fraction=args.gpu_fraction)
+p = painter.Painter(num_styles=args.num_styles, save_dir=args.save_dir, gpu=args.gpu, gpu_fraction=args.gpu_fraction, do_save_npy=args.do_save_npy,npy_path=args.npy_path)
 
 httpd = BaseHTTPServer.HTTPServer((args.host, args.port), MyHandler)
 print u'serving at', args.host, u':', args.port

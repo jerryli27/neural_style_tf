@@ -227,7 +227,7 @@ class Stylizer:
                     all_var = _get_all_variables()
                     npy = {}
                     for var in all_var:
-                        var_value = var.eval()
+                        var_value = var.eval(session=self.sess)
                         npy[var.name] = var_value
                     np.save(npy_path, npy)
                     print("Numpy array saved.")
@@ -239,7 +239,7 @@ class Stylizer:
                     self.sess.run(tf.initialize_all_variables())
             if do_load_from_npy:
                 all_var = _get_all_variables()
-                npy = np.load(npy_path)
+                npy = np.load(npy_path).item()
                 variables_loaded = []
                 for var in all_var:
                     if var.name in npy:
