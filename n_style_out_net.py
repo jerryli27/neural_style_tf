@@ -36,6 +36,13 @@ CONTENT_LAYER = 'relu4_2'  # Same setting as in the paper https://arxiv.org/abs/
 STYLE_LAYERS = ('relu1_1', 'relu2_1', 'relu3_1', 'relu4_1', 'relu5_1') # According to http://arxiv.org/abs/1603.03417
 STYLE_LAYERS_MRF = ('relu3_1', 'relu4_1')  # According to https://arxiv.org/abs/1601.04589.
 
+
+def _get_all_variables():
+    if '0.12.0' in tf.__version__:
+        return tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES)
+    else:
+        return tf.get_collection(tf.GraphKeys.VARIABLES)
+
 # This class is only used to pass a variable one_hot_vector to the style_synthesis_net function.
 class one_hot_vector_container:
     def __init__(self,vec):
@@ -53,7 +60,9 @@ class Stylizer:
                         style_semantic_masks=None, semantic_masks_weight=1.0, semantic_masks_num_layers=1,
                         do_restore_and_train=False, do_restore_and_generate=False, from_screenshot=False,
                         from_webcam=False, one_hot_vector_for_restore_and_generate=None,
-                        content_img_style_weight_mask=None, style_weight_mask_for_training=None, gpu_id = -1, gpu_fraction = 0.5):
+                        content_img_style_weight_mask=None, style_weight_mask_for_training=None,
+                        do_save_npy = False, do_load_from_npy = False, npy_path = 'n_style.npy',
+                        gpu_id = -1, gpu_fraction = 0.5):
         """
         Stylize images.
     
@@ -214,9 +223,30 @@ class Stylizer:
             ckpt = tf.train.get_checkpoint_state(save_dir)
             if ckpt and ckpt.model_checkpoint_path:
                 saver.restore(self.sess, ckpt.model_checkpoint_path)
+                if do_save_npy:
+                    all_var = _get_all_variables()
+                    npy = {}
+                    for var in all_var:
+                        var_value = var.eval()
+                        npy[var.name] = var_value
+                    np.save(npy_path, npy)
+                    print("Numpy array saved.")
             else:
-                print("No checkpoint found at " + str(save_dir)+ "! Program still running for debugging mode.")
-                self.sess.run(tf.initialize_all_variables())
+                if do_save_npy:
+                    raise AssertionError("No checkpoint found at " + str(save_dir)+ "! Can't save npy.")
+                else:
+                    print("No checkpoint found at " + str(save_dir)+ "! Program still running for debugging mode.")
+                    self.sess.run(tf.initialize_all_variables())
+            if do_load_from_npy:
+                all_var = _get_all_variables()
+                npy = np.load(npy_path)
+                variables_loaded = []
+                for var in all_var:
+                    if var.name in npy:
+                        self.sess.run([var.assign(npy[var.name])])
+                        variables_loaded.append(var.name)
+                print("Finished loading from npy file. There are %d variables loaded." %(len(variables_loaded)))
+
 
     def stylize(self, img_dir, one_hot_vector_for_restore_and_generate):
         with self.graph.as_default(), tf.device(self.device_string):

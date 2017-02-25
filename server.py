@@ -139,7 +139,7 @@ class MyHandler(CGIHTTPServer.CGIHTTPRequestHandler):
         return
 
 
-parser = argparse.ArgumentParser(description=u'chainer line drawing colorization server')
+parser = argparse.ArgumentParser(description=u'Fast Neural Style server.')
 parser.add_argument(u'--gpu', u'-g', type=int, default=-1,
                     help=u'GPU ID (negative value indicates CPU)')
 parser.add_argument(u'--gpu_fraction', u'-gf', type=float, default=0.5,
