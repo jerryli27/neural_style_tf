@@ -171,11 +171,7 @@ class Stylizer:
         # self.device_string = '/cpu:0' if gpu_id < 0 else ("/gpu:%d" %gpu_id) # This one won't work for some reason
         self.device_string = '/cpu:0' if gpu_id < 0 else ''
         with self.graph.as_default(), tf.device(self.device_string):
-            if self.num_styles == 1:
-                self.one_hot_style_vector = None
-            else:
-                print("Detected multiple style image inputs. Entering multi-style mode.")
-                self.one_hot_style_vector = tf.placeholder(tf.float32, [1, self.num_styles], name='input_style_placeholder')
+            self.one_hot_style_vector = tf.placeholder(tf.float32, [1, self.num_styles], name='input_style_placeholder')
             if self.use_johnson:
                 if self.use_semantic_masks:
                     self.inputs = tf.placeholder(tf.float32, shape=[batch_size, self.input_shape[1], self.input_shape[2], semantic_masks_num_layers])
