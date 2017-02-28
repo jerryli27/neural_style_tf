@@ -393,7 +393,7 @@ def style_synthesis_net(path_to_network, height, width, styles, iterations, batc
         # just recording the one generated at each round will make it easier to debug.
         output_for_each_style = [None for style_i in range(len(styles))]
 
-        saver = tf.train.Saver()
+        saver = tf.train.Saver(max_to_keep=1)
         with tf.Session() as sess:
             if do_restore_and_generate:
                 ckpt = tf.train.get_checkpoint_state(save_dir)
