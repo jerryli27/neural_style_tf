@@ -101,7 +101,7 @@ $(function() {
                         //location.reload();
                         console.log("uploaded")
                         var now = new Date().getTime();
-                        for (var i = 0; i < 38; i+=1) {
+                        for (var i = 0; i < 55; i+=1) {
                             $('#output_img_'.concat(i.toString())).attr('src', '/static/images/out/'+image_id+'_'+ i + '.jpg?' + now);
                             $('#output_hyperlink_'.concat(i.toString())).attr('href', '/static/images/out/'+image_id+'_'+ i + '.jpg?' + now);
                         }

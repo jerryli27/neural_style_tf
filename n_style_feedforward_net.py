@@ -214,11 +214,18 @@ def style_synthesis_net(path_to_network, height, width, styles, iterations, batc
 
     # Define tensorflow placeholders and variables.
     with tf.Graph().as_default():
-        if len(styles) == 1:
-            one_hot_style_vector = None
-        else:
-            print("Detected multiple style image inputs. Entering multi-style mode.")
+        if do_restore_and_generate:
             one_hot_style_vector = tf.placeholder(tf.float32, [1, len(styles)], name='input_style_placeholder')
+        else:
+            one_hot_style_vector = tf.get_variable(name='input_style_placeholder',shape=[1, len(styles)], dtype=tf.float32,initializer=tf.constant_initializer(), trainable=False)
+            random_style_weight = tf.random_uniform([1],maxval=3.0, name='random_style_weight')
+
+            style_i_placeholder = tf.placeholder(tf.int32, [], name='style_i_placeholder')
+            clear_one_hot_op = tf.assign(one_hot_style_vector, np.zeros((1, len(styles))))
+            with tf.control_dependencies([clear_one_hot_op]):
+                update_index = tf.expand_dims(tf.pack((0,style_i_placeholder)),0)
+                assign_random_one_hot_op =  tf.scatter_nd_update(one_hot_style_vector,update_index , random_style_weight)
+
         if use_johnson:
             if use_semantic_masks:
                 inputs = tf.placeholder(tf.float32, shape=[batch_size, input_shape[1], input_shape[2], semantic_masks_num_layers])
@@ -318,7 +325,7 @@ def style_synthesis_net(path_to_network, height, width, styles, iterations, batc
                             style_gram_num_elements = get_np_array_num_elements(style_gram)
                         style_losses_for_each_style_layer.append(
                             2 * tf.nn.l2_loss(gram - style_gram) / style_gram_num_elements)
-                current_style_loss =  style_weight * style_blend_weights[i] * reduce(tf.add, style_losses_for_each_style_layer) / batch_size
+                current_style_loss =  style_weight * style_blend_weights[i] * reduce(tf.add, style_losses_for_each_style_layer) / batch_size * tf.reduce_sum(one_hot_style_vector)
                 style_loss_for_each_style.append(current_style_loss)
                 style_loss_summary_for_each_style.append(scalar_summary("style_loss_%d_summary" % i,
                                                                         style_loss_for_each_style[-1]))
@@ -386,7 +393,7 @@ def style_synthesis_net(path_to_network, height, width, styles, iterations, batc
         # just recording the one generated at each round will make it easier to debug.
         output_for_each_style = [None for style_i in range(len(styles))]
 
-        saver = tf.train.Saver()
+        saver = tf.train.Saver(max_to_keep=1)
         with tf.Session() as sess:
             if do_restore_and_generate:
                 ckpt = tf.train.get_checkpoint_state(save_dir)
@@ -617,7 +624,10 @@ def style_synthesis_net(path_to_network, height, width, styles, iterations, batc
                         feed_dict = {content_images: content_pre_list} if not style_only else {}
 
                         if one_hot_style_vector is not None:
-                            feed_dict[one_hot_style_vector] = np.array([[1.0 if style_i == style_j else 0.0 for style_j in range(len(styles))]])
+                            sess.run([assign_random_one_hot_op], feed_dict={style_i_placeholder:style_i})
+                            # TODO: continue testing this until assigining random one hot style vector works.
+                            # sess.run([tf.assign(one_hot_style_vector[0,style_i], random_style_weight)])
+                            # feed_dict[one_hot_style_vector] = np.array([[1.0 if style_i == style_j else 0.0 for style_j in range(len(styles))]])
 
                         if use_johnson:
                             if use_semantic_masks:

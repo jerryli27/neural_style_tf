@@ -29,7 +29,7 @@ $(function() {
                 return 'Current value: ' + value;
             }
         });
-        for (var i = 0; i < 55; i += 1) {
+        for (var i = 46; i < 55; i += 1) {
             var current_slider = $("#style_weight_".concat(i.toString())).bootstrapSlider({
                 formatter: function(value) {
                     return 'Current value: ' + value;

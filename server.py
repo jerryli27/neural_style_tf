@@ -108,11 +108,11 @@ class MyHandler(CGIHTTPServer.CGIHTTPRequestHandler):
             elif form["mode"][0].decode() == "single":
                 if "style_weights" in form:
                     style_weights = form["style_weights"][0].split(',')
-                    if len(style_weights) != 38:
-                        print('incorrect style_weights format. resume to default')
-                        style_weights = [1] + [0]* 37
+                    if len(style_weights) != args.num_styles:
+                        print('incorrect style_weights format. Expecting length: %d and received vector: %s. Resume to default' %(args.num_styles, str(style_weights)))
+                        style_weights = [1] + [0]* (args.num_styles-1)
                 else:
-                    style_weights = [1] + [0]* 37
+                    style_weights = [1] + [0]* (args.num_styles-1)
                 style_weights = np.array(style_weights, dtype=np.float32)
                 style_master_weight = float(form["style_master_weight"][0])
                 if style_master_weight <= 0:
@@ -139,7 +139,7 @@ class MyHandler(CGIHTTPServer.CGIHTTPRequestHandler):
         return
 
 
-parser = argparse.ArgumentParser(description=u'chainer line drawing colorization server')
+parser = argparse.ArgumentParser(description=u'Fast Neural Style server.')
 parser.add_argument(u'--gpu', u'-g', type=int, default=-1,
                     help=u'GPU ID (negative value indicates CPU)')
 parser.add_argument(u'--gpu_fraction', u'-gf', type=float, default=0.5,
@@ -150,11 +150,20 @@ parser.add_argument(u'--host', u'-ho', default=u'localhost',
                     help=u'using host')
 parser.add_argument(u'--save_dir', u'-sv', default=u'model/',
                     help=u'directory to trained feed forward network.')
+parser.add_argument(u'--num_styles', u'-ns', type=int, default=38,
+                    help=u'Number of styles')
+
+parser.add_argument('--do_load_from_npy', dest='do_load_from_npy',
+                    help='If true, it loads the weights from an npy file instead of from a checkpoint. '
+                         '(default %(default)s).', action='store_true')
+parser.set_defaults(do_load_from_npy=False)
+parser.add_argument(u'--npy_path', default=u'n_style_combined_1_to_55.npy',
+                    help=u'directory to a npy file storing combined weights.')
 args = parser.parse_args()
 
 print u'GPU: {}'.format(args.gpu)
 
-p = painter.Painter(save_dir=args.save_dir, gpu=args.gpu, gpu_fraction=args.gpu_fraction)
+p = painter.Painter(num_styles=args.num_styles, save_dir=args.save_dir, gpu=args.gpu, gpu_fraction=args.gpu_fraction, do_load_from_npy=args.do_load_from_npy,npy_path=args.npy_path)
 
 httpd = BaseHTTPServer.HTTPServer((args.host, args.port), MyHandler)
 print u'serving at', args.host, u':', args.port
