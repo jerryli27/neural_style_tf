@@ -106,6 +106,13 @@ def build_parser():
                         dest='checkpoint_iterations', help='The program saves the current image every this number of '
                                                            'rounds.',
                         metavar='CHECKPOINT_ITERATIONS', default=CHECKPOINT_ITERATIONS, required=False)
+
+    parser.add_argument('--use_new_features',
+                        dest='use_new_features', help='If true, TODO. '
+                                             '(default %(default)s).', action='store_true')
+    parser.set_defaults(use_new_features=False)
+    parser.add_argument('--new_features_save_path', type=str,
+                        dest='new_features_save_path', help='TODO', required=False)
     return parser
 
 
@@ -183,7 +190,9 @@ def main():
                                     print_iterations=options.print_iterations,
                                     checkpoint_iterations=options.checkpoint_iterations,
                                     semantic_masks_num_layers=options.semantic_masks_num_layers,
-                                    content_img_style_weight_mask=content_img_style_weight_mask):
+                                    content_img_style_weight_mask=content_img_style_weight_mask,
+                                    use_new_features=options.use_new_features,
+                                    new_features_save_path=options.new_features_save_path):
         output_file = None
         if iteration is not None:
             if options.checkpoint_output:

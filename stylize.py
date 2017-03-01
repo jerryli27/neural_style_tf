@@ -16,6 +16,7 @@ import numpy as np
 import tensorflow as tf
 from typing import Union, Tuple, List, Iterable
 
+import feature_extractor_no_1
 import neural_doodle_util
 import neural_util
 import vgg
@@ -31,13 +32,14 @@ CONTENT_LAYER = 'relu4_2'
 STYLE_LAYERS = ('relu1_1', 'relu2_1', 'relu3_1', 'relu4_1', 'relu5_1')  # This is used for texture generation (without content)
 STYLE_LAYERS_WITH_CONTENT = ('relu1_1', 'relu2_1', 'relu3_1', 'relu4_1', 'relu5_1')
 STYLE_LAYERS_MRF = ('relu3_1', 'relu4_1')  # According to https://arxiv.org/abs/1601.04589.
+NEW_FEATURE_SYTLE_LAYERS = ('conv1_2', 'conv2_2', 'conv3_2')
 
 
 def stylize(network, content, styles, shape, iterations, content_weight=5.0, style_weight=100.0, tv_weight=100.0,
             style_blend_weights=None, learning_rate=10.0, initial=None, use_mrf=False, use_semantic_masks=False,
             mask_resize_as_feature=True, output_semantic_mask=None, style_semantic_masks=None,
             semantic_masks_weight=1.0, print_iterations=None, checkpoint_iterations=None,
-            semantic_masks_num_layers=4, content_img_style_weight_mask=None):
+            semantic_masks_num_layers=4, content_img_style_weight_mask=None, use_new_features=True, new_features_save_path = None):
     # type: (str, Union[None,np.ndarray], List[np.ndarray], Tuple[int,int,int,int], int, float, float, float, Union[None,List[float]], float, Union[None,np.ndarray], bool, bool, bool, Union[None,np.ndarray], Union[None,List[np.ndarray], float, Union[None,int], Union[None,int], Union[None,int], Union[None,np.ndarray], Union[None,int]]) -> Iterable[Tuple[Union[None,int],np.ndarray]]
     """
     Stylize images.
@@ -103,6 +105,8 @@ def stylize(network, content, styles, shape, iterations, content_weight=5.0, sty
                 content_img_style_weight_mask.dtype))
     if len(styles) == 0:
         raise AssertionError("Must feed in at least one style image.")
+    if use_new_features and new_features_save_path is None:
+        raise AssertionError('new_features_save_path must be speicified in order to use use_new_features')
 
     # Append a (1,) in front of the shapes of the style images. So the style_shapes contains (1, height, width, 3).
     # 3 corresponds to rgb.
@@ -132,10 +136,26 @@ def stylize(network, content, styles, shape, iterations, content_weight=5.0, sty
         if content_img_style_weight_mask is not None:
             style_weight_mask_layer_dict = neural_doodle_util.masks_average_pool(content_img_style_weight_mask)
 
+        if use_new_features:
+            style_image_ph = tf.placeholder('float', shape=shape)
+            _, new_feature_extractor_net = feature_extractor_no_1.content_extractor(style_image_ph)
+            new_feature_extractor_all_var = feature_extractor_no_1.get_net_all_variables()
+            new_feature_extractor_saver = tf.train.Saver(var_list=new_feature_extractor_all_var)
+            ckpt = tf.train.get_checkpoint_state(new_features_save_path)
+            if ckpt and ckpt.model_checkpoint_path:
+                new_feature_extractor_saver.restore(sess=sess, save_path=ckpt.model_checkpoint_path)
+            else:
+                raise IOError("Cannot find checkpoint at %s." %(new_features_save_path))
+
+
+
         for i in range(len(styles)):
             # Using precompute_image_features, which calculates on cpu and thus allow larger images.
             style_features[i] = neural_util.precompute_image_features(styles[i], STYLE_LAYERS, style_shapes[i],
                                                                       vgg_data, mean_pixel, use_mrf, use_semantic_masks)
+            if use_new_features:
+                style_additional_features= feature_extractor_no_1.compute_image_features(styles[i], NEW_FEATURE_SYTLE_LAYERS, new_feature_extractor_net, style_image_ph, use_mrf, use_semantic_masks)
+                style_features[i] = dict(style_features[i].items() + style_additional_features.items()) # Combine features.
 
         if use_semantic_masks:
             output_semantic_mask_features, style_features, content_semantic_mask, style_semantic_masks_images = neural_doodle_util.construct_masks_and_features(
@@ -161,7 +181,8 @@ def stylize(network, content, styles, shape, iterations, content_weight=5.0, sty
         style_loss = 0
         for i in range(len(styles)):
             style_losses = []
-            for style_layer in STYLE_LAYERS:
+            style_layers = STYLE_LAYERS if not use_new_features else STYLE_LAYERS + NEW_FEATURE_SYTLE_LAYERS
+            for style_layer in style_layers:
                 layer = net[style_layer]
                 if content_img_style_weight_mask is not None:
                     # Apply_style_weight_mask_to_feature_layer, then normalize with average of that style weight mask.
