@@ -119,6 +119,8 @@ def stylize(network, content, styles, shape, iterations, content_weight=5.0, sty
 
     # The default behavior of tensorflow was to allocate all gpu memory. Here it is set to only use as much gpu memory
     # as it needs.
+    # If you want to use cpu, uncomment this.
+    # with tf.Graph().as_default(), tf.Session(config=tf.ConfigProto(device_count = {'GPU': 0})) as sess:
     with tf.Graph().as_default(), tf.Session(
             config=tf.ConfigProto(gpu_options=tf.GPUOptions(allow_growth=True))) as sess:
         vgg_data, mean_pixel = vgg.read_net(network)
