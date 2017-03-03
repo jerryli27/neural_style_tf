@@ -16,7 +16,7 @@ import numpy as np
 import tensorflow as tf
 from typing import Union, Tuple, List, Iterable
 
-import feature_extractor_no_1
+import inception_resnet_v1
 import neural_doodle_util
 import neural_util
 import vgg
@@ -32,7 +32,7 @@ CONTENT_LAYER = 'relu4_2'
 STYLE_LAYERS = ('relu1_1', 'relu2_1', 'relu3_1', 'relu4_1', 'relu5_1')  # This is used for texture generation (without content)
 STYLE_LAYERS_WITH_CONTENT = ('relu1_1', 'relu2_1', 'relu3_1', 'relu4_1', 'relu5_1')
 STYLE_LAYERS_MRF = ('relu3_1', 'relu4_1')  # According to https://arxiv.org/abs/1601.04589.
-NEW_FEATURE_SYTLE_LAYERS = ('conv1_2', 'conv2_2', 'conv3_2')
+NEW_FEATURE_SYTLE_LAYERS = ('Conv2d_4b_3x3', 'Mixed_6a', 'Mixed_7a')
 
 
 def stylize(network, content, styles, shape, iterations, content_weight=5.0, style_weight=100.0, tv_weight=100.0,
@@ -140,8 +140,10 @@ def stylize(network, content, styles, shape, iterations, content_weight=5.0, sty
 
         if use_new_features:
             style_image_ph = tf.placeholder('float', shape=shape)
-            _, new_feature_extractor_net = feature_extractor_no_1.content_extractor(style_image_ph)
-            new_feature_extractor_all_var = feature_extractor_no_1.get_net_all_variables()
+            # _, new_feature_extractor_net = feature_extractor_no_1.content_extractor(style_image_ph)
+            # new_feature_extractor_all_var = feature_extractor_no_1.get_net_all_variables()
+            _, new_feature_extractor_net = inception_resnet_v1.inference(style_image_ph, keep_probability=1.0)
+            new_feature_extractor_all_var = inception_resnet_v1.get_net_all_variables()
             new_feature_extractor_saver = tf.train.Saver(var_list=new_feature_extractor_all_var)
             ckpt = tf.train.get_checkpoint_state(new_features_save_path)
             if ckpt and ckpt.model_checkpoint_path:
@@ -156,7 +158,7 @@ def stylize(network, content, styles, shape, iterations, content_weight=5.0, sty
             style_features[i] = neural_util.precompute_image_features(styles[i], STYLE_LAYERS, style_shapes[i],
                                                                       vgg_data, mean_pixel, use_mrf, use_semantic_masks)
             if use_new_features:
-                style_additional_features= feature_extractor_no_1.compute_image_features(styles[i], NEW_FEATURE_SYTLE_LAYERS, new_feature_extractor_net, style_image_ph, use_mrf, use_semantic_masks)
+                style_additional_features= inception_resnet_v1.compute_image_features(styles[i], NEW_FEATURE_SYTLE_LAYERS, new_feature_extractor_net, style_image_ph, use_mrf, use_semantic_masks)
                 style_features[i] = dict(style_features[i].items() + style_additional_features.items()) # Combine features.
 
         if use_semantic_masks:
